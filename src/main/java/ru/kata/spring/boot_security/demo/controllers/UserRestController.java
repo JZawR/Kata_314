@@ -38,7 +38,7 @@ public class UserRestController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<User> showUserForUser () {
+    public ResponseEntity<User> showUserForUser() {
         final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return user != null

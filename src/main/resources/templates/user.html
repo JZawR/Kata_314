@@ -23,10 +23,10 @@
 
 <nav class="navbar navbar-dark bg-dark">
     <div>
-        <b class="text-white ms-3"><span th:text="${man.email}"></span></b>
+        <b class="text-white ms-3"><span th:text="man.email"></span></b>
         <simple class="text-white">with roles:</simple>
         <simple class="text-white">
-            <span th:text="${man.roles}">     </span>
+            <span th:text="man.roles">     </span>
         </simple>
     </div>
     <a class="nav-link" href="/logout">Logout</a>
@@ -48,7 +48,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="v-pills-user-tab" data-toggle="pill" href="#v-pills-user" role="tab"
                        aria-controls="v-pills-user" aria-selected="false">
-                        <div sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+                        <div sec:authorize="hasAnyAuthority('USER')">
                             User
                         </div>
                     </a>
@@ -59,13 +59,13 @@
         <div class="col-md-10 bg-light vh-100">
             <div class="tab-content" id="v-pills-tabContent">
                 <div class="tab-pane fade show active" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab">
-                    <div sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+                    <div sec:authorize="hasAnyAuthority('USER')">
                         <h1 class="h1">User information-page</h1>
                         <div class="card">
                             <h5 class="card-header">About user</h5>
                             <div class="card-body">
                                 <div class="container-fluid">
-                                    <table class="table table-striped">
+                                    <table class="table table-striped" id="soloUser">
                                         <thead>
                                         <tr>
                                             <th scope="col">ID</th>
@@ -77,14 +77,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td th:text="${man.id}"></td>
-                                            <td th:text="${man.name}"></td>
-                                            <td th:text="${man.surname}"></td>
-                                            <td th:text="${man.age}"></td>
-                                            <td th:text="${man.email}"></td>
-                                            <td th:text="${man.roles}"></td>
-                                        </tr>
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -96,6 +89,38 @@
         </div>
     </div>
 </div>
+
+<template id="userRow">
+    <tr>
+        <td class="record">
+
+        </td>
+    </tr>
+</template>
+
+<script>
+if ('content' in document.createEvent('template')) {
+    let tbody = document.querySelector("tbody");
+    let template = document.querySelector('#userRow')
+
+    // Клонируем новую строку и вставляем её в таблицу
+    let clone = template.content.cloneNode(true);
+    let td = clone.querySelectorAll("td");
+    td[0].textContent = "33";
+    td[1].textContent = "Stuff";
+
+    tbody.appendChild(clone);
+
+    // Клонируем новую строку ещё раз и вставляем её в таблицу
+    let clone2 = template.content.cloneNode(true);
+    td = clone2.querySelectorAll("td");
+    td[0].textContent = "44";
+    td[1].textContent = "Acme";
+
+    tbody.appendChild(clone2);
+}
+
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
