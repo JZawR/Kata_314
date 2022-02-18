@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>KataGroup</groupId>
-	<artifactId>Kata_312</artifactId>
+	<artifactId>Kata_314</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Kata_312</name>
-	<description>Kata_312</description>
+	<name>Kata_314</name>
+	<description>Kata_314</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -73,7 +73,20 @@
             <version>3.0.4.RELEASE</version>
         </dependency>
 
+		<!-- 314 -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.6.0</version>
+		</dependency>
     </dependencies>
+
+
 
 	<build>
 		<plugins>
