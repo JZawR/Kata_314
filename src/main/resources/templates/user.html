@@ -90,40 +90,13 @@
     </div>
 </div>
 
-<template id="userRow">
-    <tr>
-        <td class="record">
 
-        </td>
-    </tr>
-</template>
 
-<script>
-if ('content' in document.createEvent('template')) {
-    let tbody = document.querySelector("tbody");
-    let template = document.querySelector('#userRow')
 
-    // Клонируем новую строку и вставляем её в таблицу
-    let clone = template.content.cloneNode(true);
-    let td = clone.querySelectorAll("td");
-    td[0].textContent = "33";
-    td[1].textContent = "Stuff";
-
-    tbody.appendChild(clone);
-
-    // Клонируем новую строку ещё раз и вставляем её в таблицу
-    let clone2 = template.content.cloneNode(true);
-    td = clone2.querySelectorAll("td");
-    td[0].textContent = "44";
-    td[1].textContent = "Acme";
-
-    tbody.appendChild(clone2);
-}
-
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="webjars/jquery/3.6.0/jquery.min.js"></script>
 
 </body>
 </html>
