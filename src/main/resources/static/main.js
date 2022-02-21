@@ -1,285 +1,105 @@
-$(async function () {
-    await getTableWithUsers();
-    // getNewUserForm();
-    // getDefaultModal();
-    // addNewUser();
-    // getTableWithUser();
-})
+let users, roles;
 
-const userFetchService = {
-    head: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Referer': null
-    },
-
-    findAllUsers: async () => await fetch('api/admin'),
-    findOneUser: async (id) => await fetch(`api/user/${id}`),
-    addNewUser: async (user) => await fetch('api/admin/create', {
-        method: 'POST',
-        headers: userFetchService.head,
-        body: JSON.stringify(user)
-    }),
-    updateUser: async (user, id) => await fetch(`api/edit/${id}`, {
-        method: 'PATCH',
-        headers: userFetchService.head,
-        body: JSON.stringify(user)
-    }),
-    deleteUser: async (id) => await fetch(`api/delete/${id}`, {
-        method: 'DELETE',
-        headers: userFetchService.head})
+function updateTable() {
+    $("#tbodyID").empty();
+    users.forEach(user => {
+        let userRole = '';
+        let tableRoles = user.roles;
+        for (let role of tableRoles) {
+            userRole += role.role + ' ';
+        }
+        $("#tbodyID").append("<tr>" +
+            "<td>" + user.id + "</td>" +
+            "<td>" + user.name + "</td>" +
+            "<td>" + user.surname + "</td>" +
+            "<td>" + user.age + "</td>" +
+            "<td>" + user.username + "</td>" +
+            "<td>" + userRole + "</td>" +
+            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#Um' onclick='editModal(" + user.id + ")' style='color: white'>Edit</button></td>" +
+            "<td><button class='btn btn-danger' data-bs-toggle='modal' data-bs-target='#Dm' onclick='deleteModal(" + user.id + ")' style='color: white'>Delete</button></td>" +
+            "</tr>");
+    });
 }
 
-/// таблица  всех юзеров-----------------------------
+function searchUser(id) {
+    return users.find(user => user.id === id);
+}
 
-async function getTableWithUsers() {
+function editModal(id) {
+    let user = searchUser(id);
+    $("#uID").val(user.id);
+    $("#uName").val(user.name);
+    $("#uSurname").val(user.surname);
+    $("#uAge").val(user.age);
+    $("#uEmail").val(user.email);
+    $("#uPassword").val("");
+    $("#uRoles").val(roles);
+}
 
-    let button2 = $(`#nav-admin-tabContent`);
-
-    let table = $('#tableID tbody');
-    table.empty();
-
-    await userFetchService.findAllUsers()
-        .then(res => res.json())
-        .then(users => {
-            users.forEach(user => {
-                let userRole = '';
-                let tableRoles = user.roles;
-                for (let role of tableRoles) {
-                    userRole += role.role + ' ';
+function editSubmit() {
+    let form = $("#Um");
+    $.ajax({
+        type: form.attr("method"),
+        url: form.attr("action"),
+        data: form.serialize(),
+        success: function (response) {
+            users = users.map(user => {
+                if (user.id === $("#uID").val()) {
+                    user = response;
                 }
-                let tableFilling = `$(
-                        <tr>
-                            <td>${user.id}</td>
-                            <td>${user.name}</td>
-                            <td>${user.surname}</td>      
-                            <td>${user.age}</td>      
-                            <td>${user.email}</td>      
-                            <td>${userRole}</td>      
-                            <td>
-                                <button type="button" data-userid="${user.id}" data-action="edit" class="btn btn-info" 
-                                data-toggle="modal" data-target="#Um">Edit</button>
-                            </td>
-                            <td>
-                                <button type="button" data-userid="${user.id}" data-action="delete" class="btn btn-danger" 
-                                data-toggle="modal" data-target="#Dm">Delete</button>
-                            </td>
-                        </tr>
-                )`;
-                table.append(tableFilling);
-            })
-        })
-
-}
-
-
-
-
-
-/// логика кнопок EDIT DELETE -----------------------------
-
-
-    $("#mainTableWithUsers").find('button').on('click', (event) => {
-        let defaultModal = $('#someDefaultModal');
-        let targetButton = $(event.target);
-        let buttonUserId = targetButton.attr('data-userid');
-        let buttonAction = targetButton.attr('data-action');
-
-        defaultModal.attr('data-userid', buttonUserId);
-        defaultModal.attr('data-action', buttonAction);
-        defaultModal.modal('show');
-    })
-
-
-
-
-/// NEW USER открытие формы ---------------------------------
-
-
-async function getNewUserForm() {
-    let button = $(`#SliderNewUserForm`);
-    let form = $(`#defaultSomeForm`)
-    let table = document.getElementById("mainTableWithUsers");
-    let button2 = $(`#nav-userstable`);
-    let form2 = $(`#usersTableForm`);
-
-
-    button.on('click', () => {
-        if (form.attr("data-hidden") === "true") {
-            form.attr('data-hidden', 'false');
-            form.show();
-            button.text('Hide panel');
-
-            table.style.display = 'none';
-        } else {
-            form.attr('data-hidden', 'true');
-            form.hide();
-            button.text('New User');
-
+                return user;
+            });
+            updateTable();
         }
-    })
-
-    button2.on('click', () => {
-
-            // getTableWithUsers();
-
-            table.style.display = '';
-        }
-    )
-
-}
-
-
-
-
-// ЛОГИКА МОДАЛЬНЫХ ОКОН EDIT, DELETE ---------------------------------
-
-
-
-async function getDefaultModal() {
-    $('#someDefaultModal').modal({
-        keyboard: true,
-        backdrop: "static",
-        show: false
-    }).on("show.bs.modal", (event) => {
-        let thisModal = $(event.target);
-        let userid = thisModal.attr('data-userid');
-        let action = thisModal.attr('data-action');
-        switch (action) {
-            case 'edit':
-                editUser(thisModal, userid);
-                break;
-            case 'delete':
-                deleteUser(thisModal, userid);
-                break;
-        }
-    }).on("hidden.bs.modal", (e) => {
-        let thisModal = $(e.target);
-        thisModal.find('.modal-title').html('');
-        thisModal.find('.modal-body').html('');
-        thisModal.find('.modal-footer').html('');
     })
 }
 
+function deleteModal(id) {
+    let user = searchUser(id);
+    $("#dID").val(user.id);
+    $("#dName").val(user.name);
+    $("#dSurname").val(user.surname);
+    $("#dAge").val(user.age);
+    $("#dEmail").val(user.username);
+    $("#dRoles").val(user.role)
+}
 
-// EDIT USER ---------------------------------
-
-async function editUser(modal, id) {
-    let preuser = await userFetchService.findOneUser(id);
-    let user = preuser.json();
-
-    modal.find('.modal-title').html('Edit user');
-
-    let editButton = `<button  class="btn btn-outline-success" id="editButton">Edit</button>`;
-    let closeButton = `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`
-    modal.find('.modal-footer').append(editButton);
-    modal.find('.modal-footer').append(closeButton);
-
-    user.then(user => {
-
-        let bodyForm = `
-            <form class="form-group" id="editUser">
-                <input type="text" class="form-control" id="id" name="id" value="${user.id}" disabled><br>
-                <input class="form-control" type="text" id="name" value="${user.name}"><br>
-                <input class="form-control" type="password" id="password" value="${user.password}"><br>
-                 <input class="form-control" type="text" id="email" value="${user.email}"><br>
-                 
-                 
-                <select class="custom-select" id="roles" name="roles" multiple>
-                <option value="ROLE_USER">ROLE_USER</option>
-                <option value="ROLE_ADMIN">ROLE_ADMIN</option>
-                </select>
-  
-            </form>
-        `;
-        modal.find('.modal-body').append(bodyForm);
-    })
-
-    $("#editButton").on('click', async () => {
-        let id = modal.find("#id").val().trim();
-        let name = modal.find("#name").val().trim();
-        let password = modal.find("#password").val().trim();
-        let email = modal.find("#email").val().trim();
-
-        let roles = modal.find('select[name=roles]').val();
-
-
-
-        let data = {
-            id: id,
-            name: name,
-            password: password,
-            email: email,
-            roles: roles
+function deleteSubmit() {
+    let form = $("#dForm");
+    $.ajax({
+        type: form.attr("DELETE"),
+        url: form.attr("api/delete/{id}") + $("#dID").val(),
+        data: form.serialize(),
+        success: function () {
+            users = users.filter(user => user.id !== $("#dID").val());
+            updateTable();
         }
-        const response = await userFetchService.updateUser(data, id);
+    })
+}
 
-        if (response.ok) {
-            getTableWithUsers();
-            modal.modal('hide');
-        } else {
-            let body = await response.json();
-            let alert = `<div class="alert alert-danger alert-dismissible fade show col-12" role="alert" id="sharaBaraMessageError">
-                            ${body.info}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>`;
-            modal.find('.modal-body').prepend(alert);
+function addSubmit() {
+    let form = $("#addForm");
+    $.ajax({
+        type: form.attr("method"),
+        url: form.attr("action"),
+        data: form.serialize(),
+        success: function (response) {
+            $("#all-tab").trigger("click");
+            form.trigger("reset");
+            users.push(response);
+            updateTable();
         }
     })
 }
 
 
 
-
-
-// DELETE USER ---------------------------------
-
-async function deleteUser(modal, id) {
-    await userFetchService.deleteUser(id);
-    getTableWithUsers();
-    modal.find('.modal-title').html('');
-    modal.find('.modal-body').html('User (id = ' + id + ') was deleted');
-    let closeButton = `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`
-    modal.find('.modal-footer').append(closeButton);
+function pullData() {
+            fetch("/api/admin").then(response => {
+                response.json().then(allUsers => {
+                    users = allUsers;
+                    updateTable();
+                });
+            });
 }
-
-
-
-// NEW USER ---------------------------------
-
-async function addNewUser() {
-    $('#addNewUserButton').click(async () => {
-        let addUserForm = $('#defaultSomeForm')
-        let name = addUserForm.find('#newName').val().trim();
-        let email = addUserForm.find('#newEmail').val().trim();
-        let password = addUserForm.find('#newPassword').val().trim();
-        let roles = addUserForm.find('select[name=newRoles]').val();
-        let data = {
-            name: name,
-            email: email,
-            password: password,
-            roles: roles
-        }
-        const response = await userFetchService.addNewUser(data);
-        if (response.ok) {
-            getTableWithUsers();
-            addUserForm.find('#newName').val('');
-            addUserForm.find('#newEmail').val('');
-            addUserForm.find('#newPassword').val('');
-            addUserForm.find('select[name=newRoles]').val('');
-        } else {
-            let body = await response.json();
-            let alert = `<div class="alert alert-danger alert-dismissible fade show col-12"
- role="alert" id="sharaBaraMessageError">
-                            ${body.info}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>`;
-            addUserForm.prepend(alert)
-        }
-    })
-}
-
+pullData();
