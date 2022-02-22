@@ -92,46 +92,48 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="nav-new" role="tabpanel" aria-labelledby="nav-new-tab">
-                            <div class="card">
-                                <h5 class="card-header">Add new user</h5>
+
+                            <div class="tab-pane fade" id="nav-new" role="tabpanel" aria-labelledby="nav-new-tab">
+                                <div class="card">
+                                    <h5 class="card-header">Add new user</h5>
+                                </div>
+                                <div class="card-body bg-white text-center border">
+                                    <form id="newForm">
+                                        <div class="container w-25 needs-validation">
+                                            <div class="mb-3">
+                                                <label  class="form-label"><b>First name</b></label>
+                                                <input type="text"  class="form-control" name="name" placeholder="name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label  class="form-label"><b>Last name</b></label>
+                                                <input type="text"  class="form-control" name="surname" placeholder="surname" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label"><b>Age</b></label>
+                                                <input type="number" step="1" min="0"  class="form-control" name="age" placeholder="age" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label  class="form-label"><b>Email</b></label>
+                                                <input type="text"  class="form-control" name="email" placeholder="email" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label  class="form-label"><b>Password</b></label>
+                                                <input type="text"  class="form-control" name="password" placeholder="password" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label ><b>Role</b></label>
+                                                <select multiple class="form-control" name="roles" size="2" required>
+                                                    <option >
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-success" onclick="addSubmit()">Add new user</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="card-body bg-white text-center border">
-                                <form>
-                                    <div class="container w-25 needs-validation">
-                                        <div class="mb-3">
-                                            <label th:for="name" class="form-label"><b>First name</b></label>
-                                            <input type="text"  class="form-control" name="name" placeholder="name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label th:for="surname" class="form-label"><b>Last name</b></label>
-                                            <input type="text"  class="form-control" name="surname" placeholder="surname" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label th:for="age" class="form-label"><b>Age</b></label>
-                                            <input type="number" step="1" min="0"  class="form-control" name="age" placeholder="age" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label th:for="email" class="form-label"><b>Email</b></label>
-                                            <input type="text"  class="form-control" name="email" placeholder="email" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label th:for="password" class="form-label"><b>Password</b></label>
-                                            <input type="text"  class="form-control" name="password" placeholder="password" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label th:for="roles"><b>Role</b></label>
-                                            <select multiple class="form-control"  name="roles" size="2" required>
-                                                <option >
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn btn-success">Add new user</button>
-                                    </div>
-                                </form>
-                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -144,35 +146,35 @@
 <div class="modal fade" id="Um" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content ">
-            <form>
+            <form id="uForm">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit user</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body container w-50 text-center">
                     <div class="form-group">
-                        <label><b>ID</b></label>
-                        <input type="text" class="form-control" id="uID" disabled>
+                        <label for="uID"><b>ID</b></label>
+                        <input type="text" class="form-control" id="uID" th:name="id" disabled>
                     </div>
                     <div class="form-group">
                         <label ><b>First Name</b></label>
-                        <input type="text" class="form-control" id="uName" placeholder="Enter first name" required>
+                        <input type="text" class="form-control" id="uName" th:name="name" placeholder="Enter first name" required>
                     </div>
                     <div class="form-group">
                         <label ><b>Last Name</b></label>
-                        <input type="text" class="form-control" id="uSurname" placeholder="Enter last name" required>
+                        <input type="text" class="form-control" id="uSurname" th:name="surname" placeholder="Enter last name" required>
                     </div>
                     <div class="form-group">
                         <label ><b>Age</b></label>
-                        <input type="number" class="form-control" id="uAge" step="1" min="0" placeholder="Enter age" required>
+                        <input type="number" class="form-control" id="uAge" th:name="age" step="1" min="0" placeholder="Enter age" required>
                     </div>
                     <div class="form-group">
                         <label ><b>Email</b></label>
-                        <input type="text" class="form-control" id="uEmail" aria-describedby="emailInput" placeholder="Enter email" required>
+                        <input type="text" class="form-control" id="uEmail" th:name="email" aria-describedby="emailInput" placeholder="Enter email" required>
                     </div>
                     <div class="form-group">
                         <label ><b>Password</b></label>
-                        <input type="password" class="form-control" id="uPassword" placeholder="Password" required>
+                        <input type="password" class="form-control" id="uPassword" th:name="password" placeholder="Password" required>
                     </div>
                     <div class="form-group">
                         <label ><b>Role</b></label>
@@ -183,7 +185,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Edit</button>
+                    <button type="submit" class="btn btn-primary" onclick="updateSubmit()">Edit</button>
                 </div>
             </form>
         </div>
@@ -223,13 +225,13 @@
                     <div class="form-group">
                         <label ><b>Role</b></label>
                         <select multiple class="form-control" id="dRoles" size="2" disabled>
-                            <option></option>
+
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger" id="d">Delete</button>
+                    <button type="submit" class="btn btn-danger" onclick="deleteSubmit()">Delete</button>
                 </div>
             </form>
         </div>
@@ -241,7 +243,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="/static/main.js" th:src="@{main.js}"></script>
+<script src="/main.js"></script>
 
 </body>
 </html>

@@ -31,30 +31,20 @@ public class UserRestController {
     }
 
     @PostMapping("/admin/create")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public void createUser(@RequestBody User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userService.addUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/edit/{id}")
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
+    public void updateUser(@RequestBody User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        try {
-            userService.updateUser(user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        userService.updateUser(user);
+
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 }
