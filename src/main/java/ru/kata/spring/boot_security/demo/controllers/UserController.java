@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.models.User;
 
 @Controller
-public class UserController{
+public class UserController {
 
     @GetMapping("/")
     public String toLogin() {
