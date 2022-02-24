@@ -1,12 +1,11 @@
-var users, roles;
-
-
+let users;
 
 function searchUser(id) {
     return users.find(user => user.id === id);
 }
 
 function userRole(user) {
+    console.log(user)
     let userRole = '';
     let tableRoles = user.roles;
     for (let role of tableRoles) {
@@ -15,6 +14,9 @@ function userRole(user) {
     return userRole;
 }
 
+let roles;
+roles = ${userRoles}
+console.log(roles)
 
 function editModal(id) {
     let user = searchUser(id);
@@ -24,30 +26,22 @@ function editModal(id) {
     $("#uAge").val(user.age);
     $("#uEmail").val(user.email);
     $("#uPassword").val(user.password);
-    $("#uRoles").empty().append("<option>" + userRole(user)+ "</option>");
+    $("#uRoles").val();
 }
 
 function updateSubmit() {
     let form = $("#uForm");
-    $.ajax({
-        type: 'PATCH',
-        url: 'api/edit/' + $("#uID").val(),
+    $.ajax('api/edit/' + $("#uID").val(), {
+        method: 'PATCH',
         data: form.serialize(),
         success: function (response) {
-            users = users.map(user => {
-                if (user.id === $("#uID").val()) {
-                    user = response;
-                }
-                return user;
-            });
-            updateTable();
+                return response;
         }
     })
 }
 
 function deleteModal(id) {
     let user = searchUser(id);
-    console.log(user)
     $("#dID").val(user.id);
     $("#dName").val(user.name);
     $("#dSurname").val(user.surname);
@@ -99,12 +93,13 @@ function updateTable() {
     });
 }
 
-function pullData() {
+function go() {
             fetch("/api/admin").then(response => {
-                response.json().then(allUsers => {
+                response.json().
+                then(allUsers => {
                     users = allUsers;
                     updateTable()
                 });
             });
 }
-pullData();
+go();
