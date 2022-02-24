@@ -1,11 +1,11 @@
-let users;
+let users, roles;
+
 
 function searchUser(id) {
     return users.find(user => user.id === id);
 }
 
 function userRole(user) {
-    console.log(user)
     let userRole = '';
     let tableRoles = user.roles;
     for (let role of tableRoles) {
@@ -13,10 +13,6 @@ function userRole(user) {
     }
     return userRole;
 }
-
-let roles;
-roles = ${userRoles}
-console.log(roles)
 
 function editModal(id) {
     let user = searchUser(id);
@@ -26,7 +22,14 @@ function editModal(id) {
     $("#uAge").val(user.age);
     $("#uEmail").val(user.email);
     $("#uPassword").val(user.password);
-    $("#uRoles").val();
+    $("#uRoles").empty();
+    roles.forEach(role => {
+        $("#uRoles").append(
+            "<option value=".concat(role.id,
+                (user.roles.some(r => r.id === role.id) ? " selected" : ""),
+                ">", role.role + "</option>")
+        );
+    });
 }
 
 function updateSubmit() {
@@ -34,10 +37,13 @@ function updateSubmit() {
     $.ajax('api/edit/' + $("#uID").val(), {
         method: 'PATCH',
         data: form.serialize(),
+
         success: function (response) {
-                return response;
+            return response;
         }
+
     })
+
 }
 
 function deleteModal(id) {
@@ -47,8 +53,14 @@ function deleteModal(id) {
     $("#dSurname").val(user.surname);
     $("#dAge").val(user.age);
     $("#dEmail").val(user.username);
-    console.log(userRole(user));
-    $("#dRoles").empty().append("<option>" + userRole(user)+ "</option>");
+    $("#dRoles").empty();
+    roles.forEach(role => {
+        $("#dRoles").append(
+            "<option value=".concat(role.role,
+                (user.roles.some(r => r.id === role.id) ? " selected" : ""),
+                ">", role.role + "</option>")
+        );
+    });
 }
 
 function deleteSubmit() {
@@ -87,19 +99,40 @@ function updateTable() {
             "<td>" + user.age + "</td>" +
             "<td>" + user.username + "</td>" +
             "<td>" + userRole(user) + "</td>" +
-            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#Um' onclick='editModal(" + user.id + ")' >Edit</button></td>" +
+            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#Um' onclick='editModal(" + user.id + ")' style='color: white'>Edit</button></td>" +
             "<td><button class='btn btn-danger' data-bs-toggle='modal' data-bs-target='#Dm' onclick='deleteModal(" + user.id + ")' >Delete</button></td>" +
             "</tr>");
     });
 }
 
-function go() {
-            fetch("/api/admin").then(response => {
-                response.json().
-                then(allUsers => {
-                    users = allUsers;
-                    updateTable()
-                });
-            });
+function adminPage() {
+    fetch("/api/admin").then(response => {
+        response.json().
+        then(allUsers => {
+            users = allUsers;
+            updateTable();
+        });
+    });
+    fetch("/api/roles").then(response => {
+        response.json().then(allRoles => {
+            roles = allRoles;
+        })
+    })
 }
-go();
+
+function userPage() {
+    fetch("/api/user")
+        .then(response => {
+            response.json().then(user => {
+                $("#id").text(user.id);
+                $("#name").text(user.name);
+                $("#surname").text(user.surname);
+                $("#age").text(user.age);
+                $("#email").text(user.email);
+                $("#roles").text(userRole(user));
+            })
+        })
+}
+
+adminPage();
+userPage();
