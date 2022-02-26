@@ -1,34 +1,6 @@
 let users, roles;
-
-function adminPage() {
-    fetch("/api/admin").then(response => {
-        response.json().then(allUsers => {
-            users = allUsers;
-            adminTable();
-        })
-    })
-    fetch("/api/roles").then(response => {
-        response.json().then(allRoles => {
-            roles = allRoles;
-        })
-    })
-}
-
-function adminTable() {
-    $("#tbodyID").empty();
-    users.forEach(user => {
-        $("#tbodyID").append("<tr>" +
-            "<td>" + user.id + "</td>" +
-            "<td>" + user.name + "</td>" +
-            "<td>" + user.surname + "</td>" +
-            "<td>" + user.age + "</td>" +
-            "<td>" + user.username + "</td>" +
-            "<td>" + userRole(user) + "</td>" +
-            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#Um' onclick='uModal(" + user.id + ")' style='color: white'>Edit</button></td>" +
-            "<td><button class='btn btn-danger' data-bs-toggle='modal' data-bs-target='#Dm' onclick='dModal(" + user.id + ")' >Delete</button></td>" +
-            "</tr>");
-    });
-}
+adminPage()
+userPage()
 
 function userPage() {
     fetch("/api/user")
@@ -44,8 +16,6 @@ function userPage() {
         })
 }
 
-adminPage();
-userPage();
 
 function searchUser(id) {
     return users.find(user => user.id === id);
@@ -101,29 +71,26 @@ function addSubmit() {
         type: 'POST',
         url: 'api/admin/create',
         data: form.serialize(),
-        success: function (response) {
-            $("#nav-users-tab").trigger("click");
-            form.trigger("reset");
-            users.push(response);
+        success: function () {
+            form.submit()
         }
     })
 }
 
 function updateSubmit() {
     let form = $("#uForm");
-    $.ajax({
-        method: 'PATCH',
-        url: 'api/edit/' + $("#uID").val(),
+    $.ajax('api/edit/' + $("#uID").val(), {
+        type: 'PATCH',
         data: form.serialize(),
-        success: function (response) {
-            return response;
+        success: function () {
+            form.submit()
         }
     })
 }
 
 function deleteSubmit() {
     $.ajax({
-        method: 'DELETE',
+        type: 'DELETE',
         url: "api/delete/" + $("#dID").val(),
         success: function () {
             users = users.filter(user => user.id !== $("#dID").val());
@@ -131,6 +98,34 @@ function deleteSubmit() {
     })
 }
 
+function adminTable() {
+    $("#tbodyID").empty();
+    users.forEach(user => {
+        $("#tbodyID").append("<tr>" +
+            "<td>" + user.id + "</td>" +
+            "<td>" + user.name + "</td>" +
+            "<td>" + user.surname + "</td>" +
+            "<td>" + user.age + "</td>" +
+            "<td>" + user.username + "</td>" +
+            "<td>" + userRole(user) + "</td>" +
+            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#Um' onclick='uModal(" + user.id + ")' style='color: white'>Edit</button></td>" +
+            "<td><button class='btn btn-danger' data-bs-toggle='modal' data-bs-target='#Dm' onclick='dModal(" + user.id + ")' >Delete</button></td>" +
+            "</tr>");
+    });
+}
 
+function adminPage() {
+    fetch("/api/roles").then(response => {
+        response.json().then(allRoles => {
+            roles = allRoles;
+        })
+    })
+    fetch("/api/admin").then(response => {
+        response.json().then(allUsers => {
+            users = allUsers;
+            adminTable()
+        })
+    })
+}
 
 
