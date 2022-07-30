@@ -1,11 +1,11 @@
-package ru.kata.spring.boot_security.demo.controllers;
+package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.models.Role;
-import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +18,6 @@ public class UserRestController {
     public UserRestController(UserService userService) {
         this.userService = userService;
     }
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     @GetMapping("/admin")
     public List<User> showAllUsers() {
@@ -42,13 +41,11 @@ public class UserRestController {
 
     @PostMapping("/admin/create")
     public void createUser(@ModelAttribute User user, @RequestParam("roles") Long[] roles) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userService.addUser(user, roles);
     }
 
     @PatchMapping("/edit/{id}")
     public void updateUser(@ModelAttribute User user, @RequestParam("roles") Long[] roles) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userService.updateUser(user, roles);
     }
 
