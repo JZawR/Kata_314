@@ -9,9 +9,9 @@ import java.util.Set;
 public interface UserService {
     User getUser(Long id);
     List<User> getAllUsers();
-    void addUser(User newUser, Long[] idRoles);
-    void updateUser(User updatedUser, Long[] idRoles);
+    void addUser(User newUser, List<Long> idRoles);
+    void updateUser(User updatedUser, List<Long> idRoles);
     void deleteUser(Long id);
     Set<Role> getRoles();
-    Set<Role> rolesControl(Long[] idRoles);
+//    Set<Role> rolesControl(Long[] idRoles);
 }

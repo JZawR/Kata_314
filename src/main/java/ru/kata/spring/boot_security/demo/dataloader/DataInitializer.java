@@ -2,74 +2,60 @@ package ru.kata.spring.boot_security.demo.dataloader;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repositorie.UserRepository;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Component
 public class DataInitializer implements ApplicationRunner {
+    private final UserService userService;
+    private final RoleDao roleDao;
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public DataInitializer(UserService userService, RoleDao roleDao) {
+        this.userService = userService;
+        this.roleDao = roleDao;
     }
 
+    @Transactional
     public void run(ApplicationArguments args) {
         User user = new User();
-        Set<Role> roleSet = new HashSet<>();
-        roleSet.add(new Role(1L, "USER"));
+        User q = new User();
+        User admin = new User();
+        User admin1 = new User();
+        roleDao.saveRole(new Role("USER"));
+        roleDao.saveRole(new Role("ADMIN"));
 
-        user.setId(1L);
         user.setEmail("user@mail.ru");
         user.setPassword("user");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setName("Ivan");
         user.setSurname("Ivanov");
         user.setAge(11);
-        user.setRoles(roleSet);
-        userRepository.save(user);
+        userService.addUser(user, List.of(2L,1L));
 
-        user.setId(2L);
-        user.setEmail("user1@mail.ru");
-        user.setPassword("user1");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setName("Pavel");
-        user.setSurname("Pavlov");
-        user.setAge(22);
-        user.setRoles(roleSet);
-        userRepository.save(user);
-
-        roleSet.clear();
-        roleSet.add(new Role(2L, "ADMIN"));
-
-        user.setId(3L);
-        user.setEmail("admin@mail.ru");
-        user.setPassword("admin");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setName("Nikolay");
-        user.setSurname("Nikolaev");
-        user.setAge(33);
-        user.setRoles(roleSet);
-        userRepository.save(user);
-
-        roleSet.add(new Role(1L, "USER"));
-
-        user.setId(4L);
-        user.setEmail("admin1@mail.ru");
-        user.setPassword("admin1");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setName("Andrey");
-        user.setSurname("Andreev");
-        user.setAge(44);
-        user.setRoles(roleSet);
-        userRepository.save(user);
+//        q.setEmail("q");
+//        q.setPassword("q");
+//        q.setName("Pavel");
+//        q.setSurname("Pavlov");
+//        q.setAge(22);
+//        userService.addUser(q, new Long[]{2L});
+//
+//        admin.setEmail("admin@mail.ru");
+//        admin.setPassword("admin");
+//        admin.setName("Nikolay");
+//        admin.setSurname("Nikolaev");
+//        admin.setAge(33);
+//        userService.addUser(admin, new Long[]{2L});
+//
+//        admin1.setEmail("admin1@mail.ru");
+//        admin1.setPassword("admin1");
+//        admin1.setName("Andrey");
+//        admin1.setSurname("Andreev");
+//        admin1.setAge(44);
+//        userService.addUser(admin1, new Long[]{1L, 2L});
     }
 }

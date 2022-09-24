@@ -1,8 +1,10 @@
-let users, roles;
-adminPage()
-userPage()
+let users;
+let roles;
+getAdminPage()
+getUserPage()
 
-function userPage() {
+// Заполняем страницу пользователя
+function getUserPage() {
     fetch("/api/user")
         .then(response => {
             response.json().then(user => {
@@ -11,17 +13,18 @@ function userPage() {
                 $("#surname").text(user.surname);
                 $("#age").text(user.age);
                 $("#email").text(user.email);
-                $("#roles").text(userRole(user));
+                $("#roles").text(getUserRoles(user));
             })
         })
 }
 
-
+// Функция поиска пользователя для модальных окон
 function searchUser(id) {
     return users.find(user => user.id === id);
 }
 
-function userRole(user) {
+// Выгружаем роли
+function getUserRoles(user) {
     let userRole = '';
     let tableRoles = user.roles;
     for (let role of tableRoles) {
@@ -30,7 +33,8 @@ function userRole(user) {
     return userRole;
 }
 
-function uModal(id) {
+// Заполняем окно обновления
+function showUpdateWindow(id) {
     let user = searchUser(id);
     $("#uID").val(user.id);
     $("#uName").val(user.name);
@@ -48,7 +52,8 @@ function uModal(id) {
     });
 }
 
-function dModal(id) {
+// Заполняем окно удаления
+function showDeleteWindow(id) {
     let user = searchUser(id);
     $("#dID").val(user.id);
     $("#dName").val(user.name);
@@ -58,13 +63,13 @@ function dModal(id) {
     $("#dRoles").empty();
     roles.forEach(role => {
         $("#dRoles").append(
-            "<option value=".concat(role.role,
-                (user.roles.some(r => r.id === role.id) ? " selected" : ""),
+            "<option value=".concat(role.role, (user.roles.some(r => r.id === role.id) ? " selected" : ""),
                 ">", role.role + "</option>")
         );
     });
 }
 
+// отправка на добавление
 function addSubmit() {
     let form = $("#newForm");
     $.ajax({
@@ -74,20 +79,26 @@ function addSubmit() {
         success: function () {
             form.submit()
         }
+    }).done(function(  ) {
+        top.location.href = '/admin';
     })
 }
 
+// отправка на обновление
 function updateSubmit() {
-    let form = $("#uForm");
+    let form = $("#UpdateForm");
     $.ajax('api/edit/' + $("#uID").val(), {
         type: 'PATCH',
         data: form.serialize(),
         success: function () {
             form.submit()
         }
+    }).done(function(  ) {
+        top.location.href = '/admin';
     })
 }
 
+// отправка на удаление
 function deleteSubmit() {
     $.ajax({
         type: 'DELETE',
@@ -95,10 +106,13 @@ function deleteSubmit() {
         success: function () {
             users = users.filter(user => user.id !== $("#dID").val());
         }
+    }).done(function(  ) {
+        top.location.href = '/admin';
     })
 }
 
-function adminTable() {
+// Заполенение таблицы администратора
+function getAdminTable() {
     $("#tbodyID").empty();
     users.forEach(user => {
         $("#tbodyID").append("<tr>" +
@@ -107,14 +121,15 @@ function adminTable() {
             "<td>" + user.surname + "</td>" +
             "<td>" + user.age + "</td>" +
             "<td>" + user.username + "</td>" +
-            "<td>" + userRole(user) + "</td>" +
-            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#Um' onclick='uModal(" + user.id + ")' style='color: white'>Edit</button></td>" +
-            "<td><button class='btn btn-danger' data-bs-toggle='modal' data-bs-target='#Dm' onclick='dModal(" + user.id + ")' >Delete</button></td>" +
+            "<td>" + getUserRoles(user) + "</td>" +
+            "<td><button class='btn btn-info' data-bs-toggle='modal' data-bs-target='#UpdateWindow' onclick='showUpdateWindow(" + user.id + ")' style='color: white'>Edit</button></td>" +
+            "<td><button class='btn btn-danger' data-bs-toggle='modal' data-bs-target='#DeleteWindow' onclick='showDeleteWindow(" + user.id + ")' >Delete</button></td>" +
             "</tr>");
     });
 }
 
-function adminPage() {
+// Получение ролей и пользователей из JSON
+function getAdminPage() {
     fetch("/api/roles").then(response => {
         response.json().then(allRoles => {
             roles = allRoles;
@@ -123,7 +138,7 @@ function adminPage() {
     fetch("/api/admin").then(response => {
         response.json().then(allUsers => {
             users = allUsers;
-            adminTable()
+            getAdminTable()
         })
     })
 }
